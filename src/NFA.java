@@ -30,6 +30,7 @@ public class NFA{
 
 	/* Adding state with next available unique ID number */
 	public int addState(){
+		// Making the first start state should send an epsilon transition
 		states.add(ID_Counter);
 		ID_Counter++;
 		return ID_Counter-1;
@@ -188,22 +189,14 @@ public class NFA{
 		if(other == null) return;
 		
 		// Adding all the states from the other machine
-		for (int state: other.states) {
-			this.addState(state);
-		}
+		this.addAllStates(other.states);
 		// Adding all the transitions from the other machine
-		for (Map.Entry<QSig, HashSet<Integer>> entry: other.transitions.entrySet()) {
-			QSig qs = entry.getKey();
-			HashSet<Integer> newStates = entry.getValue();
-			for (int newState: newStates) {
-				this.addTransition(qs.q, qs.sig, newState);
-			}
-		}
+		this.addAllTransitions(other.transitions);
+
 		this.addTransition(getStartState(), 'e', other.getStartState());
 		for (int finalState: other.finalStates) {
 			this.addFinalState(finalState);
 		}
-
 	}
 
 	/* Apply the concatenation operator. Concatenates other to THIS machine */

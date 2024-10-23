@@ -186,15 +186,23 @@ public class NFA{
 	/* Applies the union operator. Changes this machine but not the parameter */
 	public void union(NFA other){
 		if(other == null) return;
-
-		/* --------------------------------- */
-		/* TODO: IMPLEMENT THIS METHOD */
-		/* --------------------------------- */
-
-
-
-
-		/* --------------------------------- */
+		
+		// Adding all the states from the other machine
+		for (int state: other.states) {
+			this.addState(state);
+		}
+		// Adding all the transitions from the other machine
+		for (Map.Entry<QSig, HashSet<Integer>> entry: other.transitions.entrySet()) {
+			QSig qs = entry.getKey();
+			HashSet<Integer> newStates = entry.getValue();
+			for (int newState: newStates) {
+				this.addTransition(qs.q, qs.sig, newState);
+			}
+		}
+		this.addTransition(getStartState(), 'e', other.getStartState());
+		for (int finalState: other.finalStates) {
+			this.addFinalState(finalState);
+		}
 
 	}
 

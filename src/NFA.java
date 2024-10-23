@@ -171,17 +171,16 @@ public class NFA{
 	/* Applies the * operator to this machine. */
 	public void star(){
 		
-		/* --------------------------------- */
-		/* TODO: IMPLEMENT THIS METHOD */
-		/* --------------------------------- */
+		HashSet<Integer> validStartStates = getTransitions(getStartState(), 'e');
+		// Sends all the final states back to the beginning
+		for (int state: this.finalStates) {
+			for (int semiStartState : validStartStates) {
+				this.addTransition(state, 'e', semiStartState);
+			}
+		}
 
-
-
-
-		/* --------------------------------- */
-
-
-		
+		// Makes the start state the accept state
+		this.addFinalState(this.getStartState());
 	}
 
 	/* Applies the union operator. Changes this machine but not the parameter */

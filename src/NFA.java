@@ -211,15 +211,21 @@ public class NFA{
 	public void concatenate(NFA other){
 		if(other == null) return;
 
-		/* --------------------------------- */
-		/* TODO: IMPLEMENT THIS METHOD */
-		/* --------------------------------- */
+		// Adding all the states and transitions to this machine
+		this.addAllStates(other.states);
+		this.addAllTransitions(other.transitions);
 
+		// Connect all the final states to the other start state
+		for (int state: finalStates) {
+			this.addTransition(state, 'e', other.startState);
+		}
 
+		// Making other final states the entire machine's final states
+		this.clearFinalStates();
 
-
-		/* --------------------------------- */
-
+		for (int state: other.finalStates) {
+			this.addFinalState(state);
+		}
 	}
 
 
@@ -248,5 +254,17 @@ public class NFA{
 		return out;
 	}
 
+	private void addAllStates(HashSet<Integer> otherStates) {
+		for (int state: otherStates) {
+			this.addState(state);
+		}
+	}
 
+	private void addAllTransitions(HashMap<QSig, HashSet<Integer>> otherTransitions) {
+		for (QSig qs: otherTransitions.keySet()) {
+			for (int state: otherTransitions.get(qs)) {
+				this.addTransition(qs.q, qs.sig, state);
+			}
+		}
+	}
 }

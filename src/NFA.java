@@ -154,15 +154,23 @@ public class NFA{
 		/* Keep track of states and add start state */
 		HashSet<Integer> currentStates = new HashSet<Integer>();
 		currentStates.add(startState);
+		currentStates = epsilonTransition(currentStates);
 
-		/* --------------------------------- */
-		/* TODO: IMPLEMENT THIS METHOD */
-		/* --------------------------------- */
+		for (int i = 0; i < input.length(); i++) {
+			char c = input.charAt(i);
+			char translated = this.translateInput(c);
+			HashSet<Integer> regularTransition = transition(currentStates, translated);
+			HashSet<Integer> epsilonTransitioned = this.epsilonTransition(currentStates);
+			for (int newState : regularTransition) {
+				epsilonTransitioned.add(newState);
+			}
+			currentStates = epsilonTransitioned;
+			if (currentStates.size() < 1) { return false; }
+		}
 
-
-
-
-		/* --------------------------------- */
+		for (int currState : currentStates) {
+			if (this.finalStates.contains(currState)) { return true; }
+		}
 
 		return false;
 	}

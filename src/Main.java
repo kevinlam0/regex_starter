@@ -53,7 +53,7 @@ public class Main{
 		if (exp.length() == 0) { return null;}
 
 		/* Case 2 - Look for U operator (will never be inside parens so don't need to worry about that) */
-		
+
 		/*
 		If exp contains "U" operators
 			Split exp into all the segments between the Us (e.g., aaUddUda => [aa,dd,da])
@@ -64,6 +64,20 @@ public class Main{
 			
 			return the unioned NFA
 		*/
+		if (exp.contains("U")) {
+			String[] segments = exp.split("U");
+			NFA[] builtNfas = new NFA[segments.length];
+			for (int i = 0; i < segments.length; i++) {
+				builtNfas[i] = buildNFA(segments[i]);
+			}
+
+			NFA mainNfa = builtNfas[0];
+			for (int j = 0; j < builtNfas.length; j++) {
+				mainNfa.union(builtNfas[j]);
+			}
+		}
+
+
 
 
 
@@ -82,6 +96,7 @@ public class Main{
 
 			Return the NFA that was built
 		*/
+		
 
 		
 

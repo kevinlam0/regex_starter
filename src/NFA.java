@@ -154,7 +154,7 @@ public class NFA{
 		/* Keep track of states and add start state */
 		HashSet<Integer> currentStates = new HashSet<Integer>();
 		currentStates.add(startState);
-		currentStates = epsilonTransition(currentStates);
+		// currentStates = epsilonTransition(currentStates);
 
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
@@ -164,7 +164,7 @@ public class NFA{
 			for (int newState : regularTransition) {
 				epsilonTransitioned.add(newState);
 			}
-			currentStates = epsilonTransitioned;
+			currentStates = epsilonTransitioned;	
 			if (currentStates.size() < 1) { return false; }
 		}
 
@@ -200,6 +200,9 @@ public class NFA{
 		// Adding all the transitions from the other machine
 		this.addAllTransitions(other.transitions);
 
+		int newStartState = addState();
+		this.addTransition(newStartState, 'e', this.getStartState());
+		this.setStartState(newStartState);
 		this.addTransition(getStartState(), 'e', other.getStartState());
 		for (int finalState: other.finalStates) {
 			this.addFinalState(finalState);

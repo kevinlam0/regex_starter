@@ -21,6 +21,8 @@ public class Main{
 
 		/* Build the NFA from the regular expression */
 		NFA nfa = buildNFA(regEx);
+		System.out.println("Something" + nfa.toString());
+		System.out.println(nfa.getFinalStates().toString());
 
 		/* You can uncomment this line if you want to see the */
 		/* machine your buildNFA method produced */
@@ -75,6 +77,7 @@ public class Main{
 			for (int j = 0; j < builtNfas.length; j++) {
 				mainNfa.union(builtNfas[j]);
 			}
+			return mainNfa;
 		}
 
 
@@ -96,7 +99,19 @@ public class Main{
 
 			Return the NFA that was built
 		*/
-		
+		if (exp.charAt(0) == 'a' || exp.charAt(0) == 'd') {
+			NFA newNfa = new NFA();
+			int firstFinalState = newNfa.addState();
+			newNfa.addTransition(newNfa.getStartState(), exp.charAt(0), firstFinalState);
+			newNfa.addFinalState(firstFinalState);
+			if (exp.length() > 1 && exp.charAt(1) == '*') {
+				newNfa.star();
+			}
+			else {
+				newNfa.concatenate(buildNFA(exp.substring(1)));
+			}
+			return newNfa;
+		}
 
 		
 
@@ -112,7 +127,20 @@ public class Main{
 
 			Concatenate with the NFA for the rest of the expression after the *
 		*/
-
+		if (exp.charAt(0) == '(') {
+			String parenString = "";
+			int i = 1;
+			while (i < exp.length() && exp.charAt(i) != ')') {
+				parenString += exp.charAt(i);
+				i++;
+			}
+			NFA mainNfa = buildNFA(parenString);
+			mainNfa.star();
+			if (i + 2 < exp.length()) {
+				mainNfa.concatenate(buildNFA(exp.substring(i + 2)));
+			}
+			return mainNfa;
+		}
 		/* --------------------------------------------- */
 
 		/* Should never happen...but here so code compiles */

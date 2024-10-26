@@ -21,8 +21,6 @@ public class Main{
 
 		/* Build the NFA from the regular expression */
 		NFA nfa = buildNFA(regEx);
-		System.out.println("Something" + nfa.toString());
-		System.out.println(nfa.getFinalStates().toString());
 
 		/* You can uncomment this line if you want to see the */
 		/* machine your buildNFA method produced */
@@ -106,6 +104,9 @@ public class Main{
 			newNfa.addFinalState(firstFinalState);
 			if (exp.length() > 1 && exp.charAt(1) == '*') {
 				newNfa.star();
+				if (exp.length() > 2) {
+					newNfa.concatenate(buildNFA(exp.substring(2)));
+				}
 			}
 			else {
 				newNfa.concatenate(buildNFA(exp.substring(1)));
@@ -134,8 +135,10 @@ public class Main{
 				parenString += exp.charAt(i);
 				i++;
 			}
+
 			NFA mainNfa = buildNFA(parenString);
 			mainNfa.star();
+
 			if (i + 2 < exp.length()) {
 				mainNfa.concatenate(buildNFA(exp.substring(i + 2)));
 			}

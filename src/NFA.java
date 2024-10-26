@@ -154,25 +154,19 @@ public class NFA{
 		/* Keep track of states and add start state */
 		HashSet<Integer> currentStates = new HashSet<Integer>();
 		currentStates.add(startState);
-		// currentStates = epsilonTransition(currentStates);
+		currentStates = epsilonTransition(currentStates);
 
 		for (int i = 0; i < input.length(); i++) {
 			char c = input.charAt(i);
 			char translated = this.translateInput(c);
-			System.out.println(currentStates.toString());
-			HashSet<Integer> regularTransition = transition(currentStates, translated);
-			HashSet<Integer> epsilonTransitioned = this.epsilonTransition(currentStates);
-			for (int newState : regularTransition) {
-				epsilonTransitioned.add(newState);
-			}
 
-			HashSet<Integer> epTAgain = this.epsilonTransition(regularTransition);
-			for (int anotherState : epTAgain) {
-				epsilonTransitioned.add(anotherState);
+			HashSet<Integer> regularTransition = transition(currentStates, translated);
+			currentStates = epsilonTransition(regularTransition);
+			if (currentStates.isEmpty()) {
+				return false;
 			}
-			currentStates = epsilonTransitioned;	
-			if (currentStates.size() < 1) { return false; }
 		}
+		currentStates = epsilonTransition(currentStates);
 
 		for (int currState : currentStates) {
 			if (this.finalStates.contains(currState)) { return true; }
@@ -185,14 +179,17 @@ public class NFA{
 	/* Applies the * operator to this machine. */
 	public void star(){
 		
-		HashSet<Integer> validStartStates = getTransitions(getStartState(), 'e');
+		// HashSet<Integer> validStartStates = getTransitions(getStartState(), 'e');
+		int newStartState = addState();
+		int semiStartState = this.getStartState();
+		this.addTransition(newStartState, 'e', semiStartState);
+
 		// Sends all the final states back to the beginning
 		for (int state: this.finalStates) {
-			for (int semiStartState : validStartStates) {
-				this.addTransition(state, 'e', semiStartState);
-			}
+			this.addTransition(state, 'e', semiStartState);
 		}
-
+		
+		this.setStartState(newStartState);
 		// Makes the start state the accept state
 		this.addFinalState(this.getStartState());
 	}
